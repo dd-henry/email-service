@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum Frequency {
 
+    UNIQUE(0, "UNICA"),
     DAILY(1, "DIARIO"),
     WEEKLY(2, "SEMANAL"),
     MONTLHY(3, "MENSAL"),

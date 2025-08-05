@@ -7,9 +7,12 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 @Data
 public class Email {
+    private UUID id;
     private String to;
     private String title;
     private String content;
@@ -26,7 +29,7 @@ public class Email {
         if (days == null || days.isEmpty()) {
             return List.of();
         }
-        return List.of(days.split(",")).stream()
+        return Stream.of(days.split(","))
                 .map(String::trim)
                 .filter(day -> !day.isEmpty())
                 .map(Integer::parseInt)

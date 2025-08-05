@@ -39,7 +39,7 @@ public class ProduceMailScheduler {
         for (Email email : emails) {
             if (email.getShift() != actualShift) continue;
             try {
-                verifyShiftAndSand(dayOfWeek, dayOfMonth, today, email);
+                verifyShiftAndSend(dayOfWeek, dayOfMonth, today, email);
             } catch (Exception e) {
                 log.error("Error producing mail message: {}{}", email, e.getMessage());
             }
@@ -47,7 +47,7 @@ public class ProduceMailScheduler {
     }
 
 
-    private void verifyShiftAndSand(DayOfWeek dayOfWeek, int dayOfMonth, LocalDate today, Email email) {
+    private void verifyShiftAndSend(DayOfWeek dayOfWeek, int dayOfMonth, LocalDate today, Email email) {
         switch (email.getFrequency()) {
             case DAILY:
                 if (email.getLastSent() != null && email.getLastSent().getDayOfMonth() >= today.getDayOfMonth()) {
@@ -56,6 +56,7 @@ public class ProduceMailScheduler {
                 }
                 producer.produceEmail(email);
                 break;
+
             case WEEKLY:
                 if (email.getDaysOfWeek() != null && java.util.Arrays.stream(email.getDaysOfWeek().split(",")).map(Integer::parseInt).anyMatch(d -> d == dayOfWeek.getValue())) {
                     producer.produceEmail(email);
@@ -70,6 +71,13 @@ public class ProduceMailScheduler {
 
             case CUSTOM:
                 if (email.getIntegerDays() != null && email.getIntegerDays().contains(dayOfMonth)) {
+                    producer.produceEmail(email);
+                }
+                break;
+
+            case UNIQUE:
+                if (email.getIntegerDays() != null && email.getIntegerDays().contains(dayOfMonth)) {
+                    repository.updateStatus(email, false);
                     producer.produceEmail(email);
                 }
                 break;

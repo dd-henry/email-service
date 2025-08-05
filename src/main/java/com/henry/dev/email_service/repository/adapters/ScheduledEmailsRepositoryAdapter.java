@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.henry.dev.email_service.repository.queries.QueriesRepository.GET_ACTIVE_MAILS_SQL;
 import static com.henry.dev.email_service.repository.queries.QueriesRepository.UPDATE_LAST_SENT_SQL;
@@ -28,6 +29,14 @@ public class ScheduledEmailsRepositoryAdapter implements ScheduledEmailsReposito
     public void setLastSent(Email email) {
         jdbc.update(UPDATE_LAST_SENT_SQL, getScheduleParams(email));
         log.info("Updated last sent time for email: {}", email.getTitle());
+    }
+
+    @Override
+    public void updateStatus(Email email, boolean status) {
+        jdbc.update(
+                "UPDATE emails SET status = :status WHERE id = :id",
+                Map.of("status", status, "id", email.getId())
+        );
     }
 
 
