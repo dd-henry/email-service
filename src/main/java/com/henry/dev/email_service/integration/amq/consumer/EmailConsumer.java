@@ -1,4 +1,4 @@
-package com.henry.dev.email_service.amq.consumer;
+package com.henry.dev.email_service.integration.amq.consumer;
 
 import com.henry.dev.email_service.domain.request.Email;
 import com.henry.dev.email_service.useCase.SendMailUseCase;

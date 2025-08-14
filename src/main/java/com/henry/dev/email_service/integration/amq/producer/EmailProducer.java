@@ -1,4 +1,4 @@
-package com.henry.dev.email_service.amq.producer;
+package com.henry.dev.email_service.integration.amq.producer;
 
 import com.henry.dev.email_service.domain.request.Email;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.henry.dev.email_service.scheduler;
 
-import com.henry.dev.email_service.amq.producer.EmailProducer;
+import com.henry.dev.email_service.integration.amq.producer.EmailProducer;
 import com.henry.dev.email_service.domain.enums.Shift;
 import com.henry.dev.email_service.domain.request.Email;
 import com.henry.dev.email_service.repository.ports.ScheduledEmailsRepositoryPort;

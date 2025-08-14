@@ -1,6 +1,7 @@
 package com.henry.dev.email_service.controller;
 
 import com.henry.dev.email_service.domain.request.Email;
+import com.henry.dev.email_service.integration.ai.HuggingFaceClient;
 import com.henry.dev.email_service.useCase.RegistrationUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/registration")
 public class ResgistrationController {
 
-    private  final RegistrationUseCase useCase;
+    private final RegistrationUseCase useCase;
+    private final HuggingFaceClient ai;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerMail(@RequestBody Email email) {
@@ -21,6 +23,17 @@ public class ResgistrationController {
             return ResponseEntity.ok("Email registrado com sucesso!");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Erro ao enviar email: " + e.getMessage());
+        }
+    }
+
+
+    @PostMapping("/ai")
+    public ResponseEntity<String> testAi(@RequestBody String prompt) {
+        try {
+            String response = ai.generateText(prompt);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erro ao testar AI: " + e.getMessage());
         }
     }
 }
