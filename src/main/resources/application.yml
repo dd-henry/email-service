@@ -15,8 +15,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${EMAIL_USERNAME}
-    password: ${EMAIL_PASSWORD}
+    username: ${EMAIL_USERNAME:email}
+    password: ${EMAIL_PASSWORD:password}
     properties:
       mail:
         smtp:
@@ -25,14 +25,14 @@ spring:
             enable: true
             required: true
   rabbitmq:
-    addresses: ${RABBITMQ_ADDRESSES}
-    username: ${RABBITMQ_USERNAME}
-    password: ${RABBITMQ_PASSWORD}
-    virtual-host: ${RABBITMQ_VHOST}
-    port: ${RABBITMQ_PORT}
+    addresses: ${RABBITMQ_ADDRESSES:address}
+    username: ${RABBITMQ_USERNAME:username}
+    password: ${RABBITMQ_PASSWORD:password}
+    virtual-host: ${RABBITMQ_VHOST:vhost}
+    port: ${RABBITMQ_PORT:5672}
 
 api:
-  key: ${API_KEY}
+  key: ${API_KEY:key}
   model: ${API_MODEL:openai/gpt-oss-120b}
   base-url: ${API_BASE_URL:https://router.huggingface.co/v1/chat/completions}
 
