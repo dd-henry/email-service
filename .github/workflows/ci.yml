@@ -28,7 +28,7 @@ build:
     - chmod +x mvnw
     - ./mvnw clean package -DskipTests
   artifacts:
-    # Salva o arquivo .jar gerado para ser usado em estágios futuros.
+    # Salva o arquivo .jar gerado para ser usado em estágios futuros
     paths:
       - target/*.jar
     expire_in: 1 day
