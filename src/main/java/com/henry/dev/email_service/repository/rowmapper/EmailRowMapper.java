@@ -8,13 +8,13 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 
 public class EmailRowMapper implements RowMapper<Email> {
 
     @Override
     public Email mapRow(ResultSet rs, int rowNum) throws SQLException {
         Email email = new Email();
+        email.setId(rs.getObject("id", java.util.UUID.class));
         email.setTo(rs.getString("destinatario"));
         email.setTitle(rs.getString("assunto"));
         email.setContent(rs.getString("mensagem"));
