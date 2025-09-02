@@ -1,61 +1,79 @@
-# Define os estágios do pipeline.
-# O pipeline será executado nesta ordem.
-stages:
-  - build
-  - test
-  - package
+# Define o nome do workflow.
+name: devops
 
-# Define a imagem Docker a ser usada para todos os jobs.
-# Aqui usamos uma imagem oficial do OpenJDK 21.
-image: openjdk:21-jdk-slim
+# Define quando o workflow será executado.
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
-# Define o cache para o Maven. Isso acelera as compilações subsequentes
-# salvando as dependências baixadas.
-cache:
-  key: "$CI_COMMIT_REF_NAME"
-  paths:
-    - .m2/repository
-    - target/
-  policy: pull-push
+# Define os jobs que serão executados.
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-# --- Build Job ---
-# Compila o projeto Spring Boot.
-build:
-  stage: build
-  script:
-    - echo "Iniciando a fase de build..."
-    # Configura o cache do Maven.
-    - chmod +x mvnw
-    - ./mvnw clean package -DskipTests
-  artifacts:
-    # Salva o arquivo .jar gerado para ser usado em estágios futuros
-    paths:
-      - target/*.jar
-    expire_in: 1 day
+    # Define as permissões para o job.
+    permissions:
+      contents: read
+      packages: write
 
-# --- Test Job ---
-# Executa os testes de unidade e integração.
-test:
-  stage: test
-  script:
-    - echo "Iniciando a fase de testes..."
-    - chmod +x mvnw
-    - ./mvnw test
+    # Passos para o job de build.
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        run: ./mvnw -B package --file pom.xml
 
-# --- Package Job ---
-# Empacota o projeto em uma imagem Docker.
-# Este estágio é opcional e depende se você quer usar Docker para seu deploy.
-package:
-  stage: package
-  image: docker:20.10.16
-  services:
-    - docker:20.10.16-dind
-  script:
-    - echo "Iniciando a fase de empacotamento da imagem Docker..."
-    - docker build -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" .
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
-  rules:
-    # Este job só será executado quando uma tag for criada no Git,
-    # indicando um lançamento oficial.
-    - if: $CI_COMMIT_TAG
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-app.jar
+          path: target/*.jar
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: my-app.jar
+      - name: Run tests with Maven
+        run: ./mvnw -B test --file pom.xml
+
+  # Opcional: Job para empacotar e publicar a imagem Docker.
+  # Este job só roda em push para a branch main e com a tag de versão.
+  package:
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(github.ref, 'tags')
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/my-app:${{ github.ref_name }}
