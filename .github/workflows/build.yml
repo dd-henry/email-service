@@ -37,10 +37,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # 4. Compila e testa a aplicação com Maven
-      #    O comando "package" compila, executa os testes e gera o arquivo .jar
-      - name: Build and test with Maven
-        run: mvn -B package --file pom.xml
+
+
+    # 4: Concede permissão de execução ao Maven Wrapper
+    - name: Grant execute permission for mvnw
+      run: chmod +x mvnw
+
+    # PASSO ATUALIZADO: Compila e testa a aplicação com o Maven Wrapper
+    - name: Build and test with Maven Wrapper
+      run: ./mvnw -B package --file pom.xml
+
+    # ... (passo de upload do artefato) ...
 
       # 5. (Opcional) Upload do artefato (arquivo .jar)
       #    Salva o .jar gerado para que você possa baixá-lo ou usá-lo em outro job.
