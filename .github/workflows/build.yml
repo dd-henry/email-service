@@ -1,0 +1,51 @@
+# Nome do seu pipeline
+name: Spring Boot CI with Maven
+
+# Define os gatilhos para iniciar o pipeline
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# Define os jobs que serão executados
+jobs:
+  build:
+    # O tipo de máquina virtual para rodar o job
+    runs-on: ubuntu-latest
+
+    # Passos que compõem o job
+    steps:
+      # 1. Faz o checkout do código do seu repositório
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Configura o ambiente com Java 21 (JDK da Temurin)
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      # 3. Configura o cache para as dependências do Maven
+      #    Isso acelera os builds futuros, evitando baixar as mesmas libs toda vez.
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      # 4. Compila e testa a aplicação com Maven
+      #    O comando "package" compila, executa os testes e gera o arquivo .jar
+      - name: Build and test with Maven
+        run: mvn -B package --file pom.xml
+
+      # 5. (Opcional) Upload do artefato (arquivo .jar)
+      #    Salva o .jar gerado para que você possa baixá-lo ou usá-lo em outro job.
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: spring-boot-app
+          path: target/*.jar

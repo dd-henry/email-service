@@ -37,4 +37,4 @@ api:
   base-url: ${API_BASE_URL:https://router.huggingface.co/v1/chat/completions}
 
 server:
-  port: 8080
+  port: 8081
