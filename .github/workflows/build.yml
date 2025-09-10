@@ -4,9 +4,9 @@ name: MY-DEVOPS
 # Define os gatilhos para iniciar o pipeline
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "release" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "release" ]
 
 # Define os jobs que serão executados
 jobs:
