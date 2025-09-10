@@ -1,5 +1,5 @@
 # Nome do seu pipeline
-name: Spring Boot CI with Maven
+name: MY-DEVOPS
 
 # Define os gatilhos para iniciar o pipeline
 on:
