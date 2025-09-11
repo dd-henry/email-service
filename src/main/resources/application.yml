@@ -1,3 +1,4 @@
+debug: true
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5433/email_service_ms
@@ -35,6 +36,9 @@ api:
   key: ${API_KEY:key}
   model: ${API_MODEL:openai/gpt-oss-120b}
   base-url: ${API_BASE_URL:https://router.huggingface.co/v1/chat/completions}
+
+liquibase:
+  change-log: classpath:db/changelog/db.changelog-master.yaml
 
 server:
   port: 8081
