@@ -1,9 +1,11 @@
+-- changeset henry:1
 CREATE TABLE dominio_tipo_mensagem
 (
     id        INTEGER PRIMARY KEY,
     descricao VARCHAR(30) NOT NULL UNIQUE
 );
 
+-- changeset henry:2
 INSERT INTO dominio_tipo_mensagem (id, descricao)
 VALUES (1, 'Financeira'),
        (2, 'Geral'),
@@ -11,7 +13,7 @@ VALUES (1, 'Financeira'),
        (4, 'Estudos'),
        (5, 'Evento');
 
-
+-- changeset henry:3
 CREATE TABLE lembretes
 (
     id               UUID PRIMARY KEY         DEFAULT gen_random_uuid(),
@@ -33,7 +35,6 @@ CREATE TABLE lembretes
             REFERENCES dominio_tipo_mensagem (id)
             ON DELETE RESTRICT
             ON UPDATE CASCADE,
-
 
     CONSTRAINT chk_periodicidade CHECK (periodicidade IN ('DIARIO', 'SEMANAL', 'MENSAL', 'CUSTOMIZADO')),
     CONSTRAINT chk_turno CHECK (turno IN ('AMANHECER', 'MANHA', 'ALMOCO', 'TARDE', 'NOITE'))
