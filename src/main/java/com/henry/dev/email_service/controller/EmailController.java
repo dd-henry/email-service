@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/email")
 @RequiredArgsConstructor
+@CrossOrigin
 public class EmailController {
 
     private final EmailUseCase useCase;
