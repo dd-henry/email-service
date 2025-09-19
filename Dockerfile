@@ -30,7 +30,7 @@ WORKDIR /app
 COPY --from=builder /app/target/email-service-0.0.2-SNAPSHOT.jar ./app.jar
 
 # Expõe a porta que a aplicação usa (definida no application.yml)
-EXPOSE 8081
+EXPOSE 8080
 
 # Comando para executar a aplicação quando o container iniciar
 ENTRYPOINT ["java", "-jar", "app.jar"]
