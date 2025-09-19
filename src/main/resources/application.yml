@@ -1,7 +1,7 @@
 debug: true
 spring:
   datasource:
-    url: ${DB_URL}
+    url: ${DB_URL:jdbc:postgresql://db.kwriifwlsaarftqmwjmo.supabase.co:5432/postgres?sslmode=require}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
@@ -27,8 +27,5 @@ app:
   queues:
     email-reminder: "email-reminder-queue"
 
-liquibase:
-  change-log: classpath:db/changelog/db.changelog-master.yaml
-
 server:
-  port: 8080
+  port: 8081

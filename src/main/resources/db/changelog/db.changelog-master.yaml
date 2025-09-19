@@ -1,8 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: 1
-      author: henry
-      changes:
-        - sqlFile:
-            path: V1__create_initial_tables.sql
-            relativeToChangelogFile: true
