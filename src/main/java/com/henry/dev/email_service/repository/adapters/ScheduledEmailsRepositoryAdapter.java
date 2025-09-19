@@ -39,6 +39,19 @@ public class ScheduledEmailsRepositoryAdapter implements ScheduledEmailsReposito
         );
     }
 
+    @Override
+    public void registerSendAttempt(Email email) {
+        String sql = "INSERT INTO historico_envios " +
+                "(id, lembrete_id, data_envio, status, destinatario_enviado) " +
+                "VALUES (:id, :lembrete_id, :data_envio, :status, :destinatario_enviado)";
+        jdbc.update(sql, Map.of(
+                "id", java.util.UUID.randomUUID(),
+                "lembrete_id", email.getId(),
+                "data_envio", java.time.OffsetDateTime.now(),
+                "status", "ENVIADO", // or another status value
+                "destinatario_enviado", email.getTo()
+        ));
+    }
 
 }
 

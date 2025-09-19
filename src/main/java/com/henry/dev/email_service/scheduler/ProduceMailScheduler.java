@@ -54,6 +54,7 @@ public class ProduceMailScheduler {
                     log.info("Email already sent today: {}", email.getTitle());
                     break;
                 }
+                repository.registerSendAttempt(email);
                 producer.produceEmail(email);
                 break;
 

@@ -15,7 +15,16 @@ public class EmailController {
     @GetMapping("/{id}/confirm")
     public ResponseEntity<String> confirmEmail(@PathVariable String id) {
         useCase.confirmEmail(id);
-        String html = "<html><body><h1 style='color: green;'>Email confirmado com sucesso!</h1></body></html>";
+        String html = """
+                <html>
+                  <body>
+                    <script>
+                      window.close();
+                    </script>
+                    <p>Confirmação recebida. Você pode fechar esta janela.</p>
+                  </body>
+                </html>
+                """;
         return ResponseEntity
                 .ok()
                 .header("Content-Type", "text/html")

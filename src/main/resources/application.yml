@@ -1,44 +1,34 @@
 debug: true
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/email_service_ms
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-      show-sql: true
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQLDialect
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${EMAIL_USERNAME:email}
-    password: ${EMAIL_PASSWORD:password}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-  rabbitmq:
-    addresses: ${RABBITMQ_ADDRESSES:address}
-    username: ${RABBITMQ_USERNAME:username}
-    password: ${RABBITMQ_PASSWORD:password}
-    virtual-host: ${RABBITMQ_VHOST:vhost}
-    port: ${RABBITMQ_PORT:5672}
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      stack:
+        auto: false
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
+      sqs:
+        template:
+          default-queue-name-resolution-strategy: LOOKUP
 
 api:
   key: ${API_KEY:key}
   model: ${API_MODEL:openai/gpt-oss-120b}
   base-url: ${API_BASE_URL:https://router.huggingface.co/v1/chat/completions}
 
+app:
+  queues:
+    email-reminder: "email-reminder-queue"
+
 liquibase:
   change-log: classpath:db/changelog/db.changelog-master.yaml
 
 server:
-  port: 8081
+  port: 8080

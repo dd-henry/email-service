@@ -1,20 +1,30 @@
 package com.henry.dev.email_service.integration.amq.producer;
 
 import com.henry.dev.email_service.domain.request.Email;
+import io.awspring.cloud.sqs.operations.SqsTemplate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
-@Component
+
+@Slf4j
+@Service
 @RequiredArgsConstructor
 public class EmailProducer {
 
-    private final RabbitTemplate rabbitTemplate;
+    private final SqsTemplate sqsTemplate;
 
-    public void produceEmail(Email email) {
-        String queue = "email-queue";
+    @Value("${app.queues.email-reminder}")
+    private String queueName;
 
-        System.out.println("Producing email: " + email);
-        rabbitTemplate.convertAndSend(queue, email);
+    public void produceEmail(Email reminder) {
+        log.info("Enviando lembrete para a fila {}: {}", queueName, reminder);
+
+        sqsTemplate.send(to -> to
+                .queue(queueName)
+                .payload(reminder.toReminder())
+        );
+        log.info("Lembrete enviado com sucesso.");
     }
 }
