@@ -8,4 +8,5 @@ public interface ScheduledEmailsRepositoryPort {
     List<Email> getAllActiveMails();
     void setLastSent(Email email);
     void updateStatus(Email email, boolean status);
+    void registerSendAttempt(Email email);
 }

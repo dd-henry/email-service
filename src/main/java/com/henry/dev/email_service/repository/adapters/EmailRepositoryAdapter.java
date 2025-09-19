@@ -16,7 +16,7 @@ public class EmailRepositoryAdapter implements EmailRepositoryPort {
 
     @Override
     public void confirmEmail(UUID token) {
-        jdbc.update("UPDATE lembretes SET concluido = TRUE WHERE id = :token",
+        jdbc.update("UPDATE historico_envios SET status = 'VISUALIZADO' WHERE lembrete_id = :token",
             Map.of("token", token));
     }
 }

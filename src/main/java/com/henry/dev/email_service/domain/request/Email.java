@@ -1,5 +1,6 @@
 package com.henry.dev.email_service.domain.request;
 
+import com.henry.dev.email_service.domain.Reminder;
 import com.henry.dev.email_service.domain.enums.Frequency;
 import com.henry.dev.email_service.domain.enums.MailType;
 import com.henry.dev.email_service.domain.enums.Shift;
@@ -23,7 +24,15 @@ public class Email {
     private String daysOfWeek;
     private LocalDateTime lastSent;
 
-
+    public Reminder toReminder() {
+        return Reminder.builder()
+                .id(id)
+                .to(to)
+                .title(title)
+                .content(content)
+                .mailType(mailType)
+                .build();
+    }
 
     public List<Integer> getIntegerDays(){
         if (days == null || days.isEmpty()) {
