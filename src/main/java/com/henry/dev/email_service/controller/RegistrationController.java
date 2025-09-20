@@ -27,7 +27,7 @@ public class RegistrationController {
     }
 
 
-    @PostMapping("/run-scheduler")
+    @PostMapping("/run")
     public ResponseEntity<?> runScheduler() {
         try {
             scheduler.execute();
