@@ -1,0 +1,27 @@
+# Versão do Docker Compose
+version: '3.8'
+
+# Definimos os serviços (os nossos contentores)
+services:
+  # O nome do nosso serviço de aplicação
+  email-service:
+    # Diz ao Compose para construir a imagem usando o Dockerfile
+    # que está na mesma pasta (indicado pelo '.')
+    build: .
+    # Reinicia o contentor automaticamente se ele falhar
+    restart: unless-stopped
+    # Mapeia as variáveis de ambiente do ficheiro .env para dentro do contentor
+    env_file:
+      - .env
+    # Conecta este serviço à nossa rede customizada
+    networks:
+      - dokploy-network
+    # Expõe a porta 8081 do contentor para que outros serviços a possam aceder
+    ports:
+      - "8080" # Não mapeamos para o host, o Dokploy/Traefik irá gerir isto
+
+# Definimos as redes que os nossos serviços usarão
+networks:
+  dokploy-network:
+    # Marcamos a rede como externa, porque no Dokploy ela já existe
+    external: true
