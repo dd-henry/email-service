@@ -22,7 +22,11 @@ public class EmailServiceApplication {
     public void testDatabaseConnection() {
         try {
             jdbc.query("SELECT * from lembretes", rs -> null);
-            System.out.println("Conexão com o banco realizada com sucesso.");
+            System.out.println("""
+                    ##########################################
+                    Conexão com o banco realizada com sucesso.
+                    ##########################################
+                    """);
         } catch (Exception e) {
             System.err.println("Falha na conexão com o banco: " + e.getMessage());
         }
