@@ -21,7 +21,7 @@ public class ProduceMailScheduler {
     private final ScheduledEmailsRepositoryPort repository;
     private final EmailProducer producer;
 
-    @Scheduled(cron = "0 0 1,6,9,12,15,18 * * *")
+    @Scheduled(cron = "0 15 1,6,9,12,15,18 * * *")
 //    @Scheduled(cron = "0 */1 * * * *")
     public void execute() {
         log.info("Iniciando verificação de emails agendados...");
