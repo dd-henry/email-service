@@ -10,13 +10,12 @@ services:
     build: .
     # Reinicia o contentor automaticamente se ele falhar
     restart: unless-stopped
-    # Mapeia as variáveis de ambiente do ficheiro .env para dentro do contentor
-    env_file:
-      - .env
+    # Removemos a linha 'env_file'.
+    # Agora, o Compose usará as variáveis de ambiente definidas na UI do Dokploy.
     # Conecta este serviço à nossa rede customizada
     networks:
       - dokploy-network
-    # Expõe a porta 8081 do contentor para que outros serviços a possam aceder
+    # Expõe a porta 8080 do contentor para que outros serviços a possam aceder
     ports:
       - "8080" # Não mapeamos para o host, o Dokploy/Traefik irá gerir isto
 
