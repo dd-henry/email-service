@@ -28,7 +28,12 @@ public class RegistrationController {
 
 
     @PostMapping("/run-scheduler")
-    public void runScheduler() {
-        scheduler.execute();
+    public ResponseEntity<?> runScheduler() {
+        try {
+            scheduler.execute();
+            return ResponseEntity.ok("Scheduler executado com sucesso!");
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage() + e.getCause() + e.getStackTrace());
+        }
     }
 }
