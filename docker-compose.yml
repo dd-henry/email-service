@@ -5,14 +5,8 @@ version: '3.8'
 services:
   # O nome do nosso serviço de aplicação
   email-service:
-    # Diz ao Compose para construir a imagem usando o Dockerfile
-    # que está na mesma pasta (indicado pelo '.')
     build: .
-    # Reinicia o contentor automaticamente se ele falhar
     restart: unless-stopped
-
-    # Mapeamos explicitamente as variáveis de ambiente do Dokploy
-    # para as variáveis que o nosso contentor espera.
     environment:
       - DB_URL=${DB_URL}
       - DB_USERNAME=${DB_USERNAME}
@@ -22,29 +16,22 @@ services:
       - API_KEY=${API_KEY}
       - API_MODEL=${API_MODEL}
       - API_BASE_URL=${API_BASE_URL}
-
-    # Expõe a porta 8080 do contentor para que outros serviços a possam aceder
     ports:
-      - "8080" # Não mapeamos para o host, o Dokploy/Traefik irá gerir isto
-
-    # --- BLOCO ADICIONADO PARA CONFIGURAR O CORS NO TRAEFIK ---
+      - "8080"
     labels:
-      # Define as regras do middleware de CORS
+      # --- Cria o middleware de CORS ---
       - "traefik.http.middlewares.cors-headers.headers.accessControlAllowMethods=GET,POST,PUT,DELETE,OPTIONS"
       - "traefik.http.middlewares.cors-headers.headers.accessControlAllowOriginList=*"
       - "traefik.http.middlewares.cors-headers.headers.accessControlAllowHeaders=*"
       - "traefik.http.middlewares.cors-headers.headers.accessControlMaxAge=86400"
 
-      # Aplica o middleware ao router do seu serviço
-      # !! IMPORTANTE !! Verifique se o nome do router está correto. O mais provável é 'reminder-email-service-production'
-      - "traefik.http.routers.reminder-email-service-production.middlewares=cors-headers"
-
-    # Conecta este serviço à nossa rede customizada
+      # --- Aplica o middleware aos routers corretos gerados pelo Dokploy ---
+      - "traefik.http.routers.reminder-emailservice-vmsa3g-9-web.middlewares=cors-headers"
+      - "traefik.http.routers.reminder-emailservice-vmsa3g-9-websecure.middlewares=cors-headers"
     networks:
       - dokploy-network
 
 # Definimos as redes que os nossos serviços usarão
 networks:
   dokploy-network:
-    # Marcamos a rede como externa, porque no Dokploy ela já existe
     external: true
