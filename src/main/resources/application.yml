@@ -4,6 +4,13 @@ spring:
     url: ${DB_URL:jdbc:postgresql://db.kwriifwlsaarftqmwjmo.supabase.co:5432/postgres?sslmode=require}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 2      # Máx. de conexões no pool
+      minimum-idle: 1            # Mantém pelo menos 1 conexão pronta
+      idle-timeout: 180000        # Fecha conexões ociosas após 30s
+      max-lifetime: 600000       # Fecha e recria conexões a cada 10 min
+      connection-timeout: 30000  # Tempo máx. esperando uma conexão livre (30s)
+      pool-name: HikariPool-Supabase
 
   cloud:
     aws:
