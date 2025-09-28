@@ -33,11 +33,15 @@ public class ProduceMailScheduler {
 
         List<Email> emails = repository.getAllActiveMails();
         if (emails.isEmpty()) {
+            log.info("No emails found.");
             return;
         }
 
         for (Email email : emails) {
-            if (email.getShift() != actualShift) continue;
+            if (email.getShift() != actualShift) {
+                log.info("Skipping email {} for shift {}. Current shift is {}.", email.getTitle(), email.getShift(), actualShift);
+                continue;
+            }
             try {
                 verifyShiftAndSend(dayOfWeek, dayOfMonth, today, email);
             } catch (Exception e) {
