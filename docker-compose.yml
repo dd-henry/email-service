@@ -25,7 +25,7 @@ services:
       - "traefik.http.middlewares.cors-headers.headers.accessControlAllowHeaders=*"
       - "traefik.http.middlewares.cors-headers.headers.accessControlMaxAge=86400"
 
-      # --- Aplica o middleware aos routers corretos gerados pelo Dokploy ---
+      # --- Aplica o middleware aos ROUTERS CORRETOS (confirmado pelo dashboard) ---
       - "traefik.http.routers.reminder-emailservice-vmsa3g-9-web.middlewares=cors-headers"
       - "traefik.http.routers.reminder-emailservice-vmsa3g-9-websecure.middlewares=cors-headers"
     networks:
