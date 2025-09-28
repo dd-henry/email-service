@@ -1,9 +1,7 @@
 # Versão do Docker Compose
 version: '3.8'
 
-# Definimos os serviços (os nossos contentores)
 services:
-  # O nome do nosso serviço de aplicação
   email-service:
     build: .
     restart: unless-stopped
@@ -19,19 +17,38 @@ services:
     ports:
       - "8080"
     labels:
-      # --- Cria o middleware de CORS ---
+      # --- INSTRUÇÕES GERAIS PARA O TRAEFIK ---
+      - "traefik.enable=true"
+      # Define a qual porta interna do contêiner o Traefik deve enviar o tráfego.
+      - "traefik.http.services.email-service.loadbalancer.server.port=8080"
+
+      # --- MIDDLEWARE DE CORS (continua o mesmo) ---
       - "traefik.http.middlewares.cors-headers.headers.accessControlAllowMethods=GET,POST,PUT,DELETE,OPTIONS"
       - "traefik.http.middlewares.cors-headers.headers.accessControlAllowOriginList=*"
       - "traefik.http.middlewares.cors-headers.headers.accessControlAllowHeaders=*"
       - "traefik.http.middlewares.cors-headers.headers.accessControlMaxAge=86400"
 
-      # --- Aplica o middleware aos ROUTERS CORRETOS (confirmado pelo dashboard) ---
-      - "traefik.http.routers.reminder-emailservice-vmsa3g-9-web.middlewares=cors-headers"
-      - "traefik.http.routers.reminder-emailservice-vmsa3g-9-websecure.middlewares=cors-headers"
+      # --- ROUTER PARA O DOMÍNIO CUSTOMIZADO (HTTPS) ---
+      # Define um router chamado 'email-service-secure' para o seu domínio.
+      - "traefik.http.routers.email-service-secure.rule=Host(`henrylabz.cloud`)"
+      # Diz a este router para usar o ponto de entrada HTTPS (porta 443).
+      - "traefik.http.routers.email-service-secure.entrypoints=websecure"
+      # Habilita o SSL/TLS e usa o resolvedor de certificados 'letsencrypt'.
+      - "traefik.http.routers.email-service-secure.tls.certresolver=letsencrypt"
+      # Aplica nosso middleware de CORS a este router.
+      - "traefik.http.routers.email-service-secure.middlewares=cors-headers"
+
+      # --- ROUTER PARA REDIRECIONAMENTO DE HTTP PARA HTTPS ---
+      # Define um router chamado 'email-service-web' para o seu domínio.
+      - "traefik.http.routers.email-service-web.rule=Host(`henrylabz.cloud`)"
+      # Diz a este router para usar o ponto de entrada HTTP (porta 80).
+      - "traefik.http.routers.email-service-web.entrypoints=web"
+      # Aplica um middleware padrão do Dokploy para redirecionar para HTTPS.
+      - "traefik.http.routers.email-service-web.middlewares=redirect-to-https@file"
+
     networks:
       - dokploy-network
 
-# Definimos as redes que os nossos serviços usarão
 networks:
   dokploy-network:
     external: true
