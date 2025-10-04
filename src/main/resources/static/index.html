@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Email</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #fff8f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 480px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 32px 28px 28px 28px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(255,152,0,0.10);
+        }
+        h2 {
+            text-align: center;
+            color: #ff9800;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            margin-top: 18px;
+            font-size: 15px;
+            color: #ff9800;
+            font-weight: 500;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: 1px solid #ffd699;
+            background: #fff8f0;
+            font-size: 15px;
+            transition: border 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            border: 1.5px solid #ff9800;
+            outline: none;
+        }
+        .days-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .days-group label {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            font-size: 14px;
+            color: #ff9800;
+            background: #fff3e0;
+            border-radius: 6px;
+            padding: 2px 8px;
+        }
+        #monthlyDays {
+            margin-top: 10px;
+        }
+        #monthDaysGroup {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            background: #fff3e0;
+            border: 1.5px solid #ff9800;
+            border-radius: 10px;
+            padding: 12px;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+        button[type="submit"] {
+            margin-top: 28px;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #ff9800 60%, #ffb74d 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(255,152,0,0.08);
+            transition: background 0.2s;
+        }
+        button[type="submit"]:hover {
+            background: linear-gradient(90deg, #ffb74d 40%, #ff9800 100%);
+        }
+        .result {
+            margin-top: 24px;
+            background: #fff3e0;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #ff9800;
+            border: 1px solid #ffd699;
+        }
+        @media (max-width: 600px) {
+            .container {
+                max-width: 98vw;
+                padding: 12px;
+            }
+            #monthDaysGroup {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Recados da Donna</h2>
+    <form id="emailForm">
+        <label>Para (Email):
+            <input type="email" name="to" required />
+        </label>
+        <label>Título:
+            <input type="text" name="title" required />
+        </label>
+        <label>Conteúdo:
+            <textarea name="content" rows="4" required></textarea>
+        </label>
+        <label>Tipo de Email:
+            <select name="mailType" required>
+                <option value="FINANCE">Financeiro</option>
+                <option value="GENERAL">Geral</option>
+                <option value="MESSAGE">Mensagem</option>
+                <option value="STUDY">Estudo</option>
+                <option value="EVENT">Evento</option>
+            </select>
+        </label>
+        <label>Frequência:
+            <select name="frequency" id="frequency" required>
+                <option value="UNIQUE">Único</option>
+                <option value="DAILY">Diário</option>
+                <option value="WEEKLY">Semanal</option>
+                <option value="MONTLHY">Mensal</option>
+            </select>
+        </label>
+        <div id="weeklyDays" style="display:none;">
+            <label>Dias da Semana:</label>
+            <div class="days-group">
+                <label><input type="checkbox" value="1" />Segunda</label>
+                <label><input type="checkbox" value="2" />Terça</label>
+                <label><input type="checkbox" value="3" />Quarta</label>
+                <label><input type="checkbox" value="4" />Quinta</label>
+                <label><input type="checkbox" value="5" />Sexta</label>
+                <label><input type="checkbox" value="6" />Sábado</label>
+                <label><input type="checkbox" value="7" />Domingo</label>
+            </div>
+        </div>
+        <div id="monthlyDays" style="display:none;">
+            <label>Dias do Mês:</label>
+            <div class="days-group" id="monthDaysGroup"></div>
+        </div>
+        <label>Turno:
+            <select name="shift" required>
+                <option value="DAWN">Amanhecer</option>
+                <option value="MORNING">Manhã</option>
+                <option value="LUNCH">Almoço</option>
+                <option value="AFTERNOON">Tarde</option>
+                <option value="EVENING">Noite</option>
+            </select>
+        </label>
+        <button type="submit">Registrar</button>
+    </form>
+    <div class="result" id="result"></div>
+</div>
+<script>
+    // Populate monthly days
+    const monthDaysGroup = document.getElementById('monthDaysGroup');
+    for(let i=1; i<=31; i++) {
+        const label = document.createElement('label');
+        label.innerHTML = `<input type='checkbox' value='${i}' />${i}`;
+        monthDaysGroup.appendChild(label);
+    }
+
+    // Show/hide day selectors
+    document.getElementById('frequency').addEventListener('change', function() {
+        document.getElementById('weeklyDays').style.display = this.value === 'WEEKLY' ? '' : 'none';
+        document.getElementById('monthlyDays').style.display = this.value === 'MONTLHY' ? '' : 'none';
+    });
+
+    // LocalStorage helpers
+    const FORM_KEY = 'registerEmailForm';
+    function saveFormToLocalStorage() {
+        const form = document.getElementById('emailForm');
+        const data = {
+            to: form.to.value,
+            title: form.title.value,
+            content: form.content.value,
+            mailType: form.mailType.value,
+            frequency: form.frequency.value,
+            shift: form.shift.value,
+            weeklyDays: Array.from(document.querySelectorAll('#weeklyDays input[type=checkbox]:checked')).map(cb => cb.value),
+            monthlyDays: Array.from(document.querySelectorAll('#monthlyDays input[type=checkbox]:checked')).map(cb => cb.value)
+        };
+        localStorage.setItem(FORM_KEY, JSON.stringify(data));
+    }
+    function restoreFormFromLocalStorage() {
+        const saved = localStorage.getItem(FORM_KEY);
+        if (!saved) return;
+        const data = JSON.parse(saved);
+        const form = document.getElementById('emailForm');
+        form.to.value = data.to || '';
+        form.title.value = data.title || '';
+        form.content.value = data.content || '';
+        form.mailType.value = data.mailType || 'FINANCE';
+        form.frequency.value = data.frequency || 'UNIQUE';
+        form.shift.value = data.shift || 'DAWN';
+        document.getElementById('frequency').dispatchEvent(new Event('change'));
+        // Restore weekly days
+        document.querySelectorAll('#weeklyDays input[type=checkbox]').forEach(cb => {
+            cb.checked = data.weeklyDays && data.weeklyDays.includes(cb.value);
+        });
+        // Restore monthly days
+        document.querySelectorAll('#monthlyDays input[type=checkbox]').forEach(cb => {
+            cb.checked = data.monthlyDays && data.monthlyDays.includes(cb.value);
+        });
+    }
+    // Save on change
+    document.getElementById('emailForm').addEventListener('input', saveFormToLocalStorage);
+    document.getElementById('emailForm').addEventListener('change', saveFormToLocalStorage);
+    // Restore on load
+    window.addEventListener('DOMContentLoaded', restoreFormFromLocalStorage);
+
+    document.getElementById('emailForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const button = form.querySelector('button[type="submit"]');
+        button.disabled = true;
+        const data = {
+            to: form.to.value,
+            title: form.title.value,
+            content: form.content.value,
+            mailType: form.mailType.value,
+            frequency: form.frequency.value,
+            shift: form.shift.value,
+            days: '',
+            daysOfWeek: ''
+        };
+        if(data.frequency === 'WEEKLY') {
+            const checked = Array.from(document.querySelectorAll('#weeklyDays input[type=checkbox]:checked')).map(cb => cb.value);
+            data.daysOfWeek = checked.join(',');
+        }
+        if(data.frequency === 'MONTLHY' || data.frequency === 'UNIQUE' || data.frequency === 'CUSTOM') {
+            const checked = Array.from(document.querySelectorAll('#monthlyDays input[type=checkbox]:checked')).map(cb => cb.value);
+            data.days = checked.join(',');
+        }
+        // Exibe o JSON para debug
+        document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+        // Envia para o backend
+        try {
+            const response = await fetch('/api/v1/registration/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const text = await response.text();
+            if (response.ok) {
+                document.getElementById('result').textContent = 'Sucesso: ' + text;
+                form.reset();
+                localStorage.removeItem(FORM_KEY);
+            } else {
+                document.getElementById('result').textContent = 'Erro: ' + text;
+            }
+        } catch (err) {
+            document.getElementById('result').textContent = 'Erro de conexão: ' + err;
+        }
+        button.disabled = false;
+    });
+</script>
+</body>
+</html>
