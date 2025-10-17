@@ -18,10 +18,10 @@ public class HomeController {
 
         int randomNumber =   random.nextInt(1, 4);
         return switch (randomNumber) {
-            case 1 -> "<h1>Tá rodando! 🚀</h1>";
-            case 2 -> "<h1>HenryLabz \uD83D\uDDA5\uFE0F</h1>";
+            case 1 -> "<h1>1Tá rodando! 🚀</h1>";
+            case 2 -> "<h1>1HenryLabz \uD83D\uDDA5\uFE0F</h1>";
             default ->
-                    "<h1>Pod está de pé!</h1>";
+                    "<h1>1Pod está de pé!</h1>";
         };
     }
 }
