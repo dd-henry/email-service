@@ -89,7 +89,7 @@ public class ProduceMailScheduler {
         }
     }
 
-    private Shift getActualShift() {
+    public Shift getActualShift() {
         int hora = LocalTime.now().getHour();
         if (hora >= 5 && hora < 8) return Shift.DAWN;
         if (hora >= 8 && hora < 11) return Shift.MORNING;
