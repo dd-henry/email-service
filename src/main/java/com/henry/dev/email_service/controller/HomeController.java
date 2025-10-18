@@ -2,6 +2,7 @@ package com.henry.dev.email_service.controller;
 
 
 import com.henry.dev.email_service.scheduler.ProduceMailScheduler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,8 +11,9 @@ import java.util.Random;
 
 @RestController
 @RequestMapping("/")
+@RequiredArgsConstructor
 public class HomeController {
-    private ProduceMailScheduler tools;
+    private final ProduceMailScheduler tools;
 
     @GetMapping
     public String home() {
